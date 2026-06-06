@@ -1,0 +1,32 @@
+name: Update Launch Data
+
+on:
+  schedule:
+    - cron: '0 * * * *'   # 毎時0分
+  workflow_dispatch:       # 手動実行
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch launch data
+        env:
+          SPACEDEVS_API_KEY: ${{ secrets.SPACEDEVS_API_KEY }}
+        run: python fetch_launches.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/launches.json
+          git diff --staged --quiet || git commit -m "Update launches $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push

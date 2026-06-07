@@ -3,13 +3,21 @@ import json
 import os
 from datetime import datetime, timezone
 
-API_URL = 'https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=25&mode=detailed'
+API_URL = 'https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=100&mode=detailed'
 
 def fetch():
     headers = {'Accept': 'application/json'}
-    r = requests.get(API_URL, headers=headers, timeout=30)
-    r.raise_for_status()
-    return r.json().get('results', [])
+    results = []
+    url = API_URL
+    while url:
+        r = requests.get(url, headers=headers, timeout=30)
+        r.raise_for_status()
+        data = r.json()
+        results.extend(data.get('results', []))
+        url = data.get('next')
+        if url:
+            print(f'  fetched {len(results)} so far, next page...')
+    return results
 
 def extract(launch):
     pad = launch.get('pad') or {}

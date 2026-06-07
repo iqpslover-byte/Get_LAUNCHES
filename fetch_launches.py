@@ -3,7 +3,7 @@ import json
 import os
 from datetime import datetime, timezone
 
-API_URL = 'https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=25&mode=detailed'
+API_URL = 'https://ll.thespacedevs.com/2.2.0/launch/upcoming/?limit=100&mode=detailed'
 
 def fetch():
     headers = {'Accept': 'application/json'}
@@ -41,6 +41,7 @@ def extract(launch):
         'pad_map':      pad.get('map_url', ''),
         'net_precision':net_precision.get('name', ''),
         'webcast':      bool(launch.get('webcast_live', False)),
+        'webcast_url':  launch.get('vidURLs', [{}])[0].get('url', '') if launch.get('vidURLs') else '',
         'hold_reason':  launch.get('holdreason', '') or '',
         'fail_reason':  launch.get('failreason', '') or '',
         'weather':      launch.get('weather_concerns', '') or '',

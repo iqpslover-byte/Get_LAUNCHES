@@ -10,9 +10,17 @@ def fetch():
     api_key = os.environ.get('SPACEDEVS_API_KEY', '')
     if api_key:
         headers['Authorization'] = f'Token {api_key}'
-    r = requests.get(API_URL, headers=headers, timeout=30)
-    r.raise_for_status()
-    return r.json()
+    results = []
+    url = API_URL
+    while url:
+        r = requests.get(url, headers=headers, timeout=30)
+        r.raise_for_status()
+        data = r.json()
+        results.extend(data.get('results', []))
+        url = data.get('next')
+        if url:
+            print(f'  fetched {len(results)} so far, next page...')
+    return results
 
 def extract(launch):
     pad = launch.get('pad') or {}
@@ -53,8 +61,7 @@ def extract(launch):
 
 def main():
     print('Fetching launch data...')
-    raw = fetch()
-    results = raw.get('results', [])
+    results = fetch()
     launches = [extract(l) for l in results]
     output = {
         'updated': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),

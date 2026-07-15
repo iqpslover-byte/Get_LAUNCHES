@@ -54,6 +54,18 @@ def extract(launch):
         'program':      [p.get('name', '') for p in programs if p.get('name')],
         'orbital_count':launch.get('orbital_launch_attempt_count') or 0,
         'year_orbital': launch.get('orbital_launch_attempt_count_year') or 0,
+        # --- 追加(打上げ底上げ): 打上げウィンドウ・気象GO確率・ブースター着地/再使用 ---
+        'window_start': launch.get('window_start', '') or '',
+        'window_end':   launch.get('window_end', '') or '',
+        'probability':  launch.get('probability'),   # 0-100(%) / -1 or None = 不明
+        'boosters':     [{
+            'serial':          (ls.get('launcher') or {}).get('serial_number', '') or '',
+            'flight':          ls.get('launcher_flight_number'),          # 何回目の飛行か
+            'reused':          ls.get('reused'),
+            'landing_type':    ((ls.get('landing') or {}).get('type') or {}).get('abbrev', '') or '',       # ASDS/RTLS等
+            'landing_loc':     ((ls.get('landing') or {}).get('location') or {}).get('abbrev', '') or '',    # 着地場所/ドローン船
+            'landing_success': (ls.get('landing') or {}).get('success'),
+        } for ls in (rocket.get('launcher_stage') or [])],
     }
 
 def main():

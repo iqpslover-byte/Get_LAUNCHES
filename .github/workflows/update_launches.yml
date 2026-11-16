@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-launches   # 前の実行が終わるまで次を始めない（過去の便の続きの位置がずれないように）
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -29,5 +33,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/launches.json
+          git add data/past 2>/dev/null || true   # 過去の便が失敗しても、これからの便は上げる
           git diff --staged --quiet || git commit -m "Update launches $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push

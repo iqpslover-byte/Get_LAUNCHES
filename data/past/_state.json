@@ -1,9 +1,9 @@
 {
  "recent_refreshed": "2026-11-18T09:18:54Z",
- "backfill_offset": 7200,
- "backfill_total": 7664,
- "updated": "2026-11-18T18:27:46Z",
- "count": 7300,
+ "backfill_offset": 7665,
+ "backfill_total": 7665,
+ "updated": "2026-11-19T00:47:52Z",
+ "count": 7665,
  "years": [
   "1957",
   "1958",
@@ -75,5 +75,7 @@
   "2024",
   "2025",
   "2026"
- ]
+ ],
+ "backfill_done": true,
+ "backfill_done_at": "2026-11-19T00:47:52Z"
 }
